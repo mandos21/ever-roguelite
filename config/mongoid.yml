@@ -1,0 +1,26 @@
+development:
+  clients:
+    default:
+      uri: <%= ENV['MONGO_URI'] %>
+      options:
+        server_selection_timeout: 5
+  options:
+    raise_not_found_error: false
+
+test:
+  clients:
+    default:
+      uri: <%= ENV['MONGO_URI_TEST'] %>
+      options:
+        server_selection_timeout: 5
+  options:
+    raise_not_found_error: false
+
+production:
+  clients:
+    default:
+      uri: <%= ENV['MONGO_URI_PRODUCTION'] %>
+      options:
+        server_selection_timeout: 5
+  options:
+    raise_not_found_error: true
