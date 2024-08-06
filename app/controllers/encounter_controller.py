@@ -1,7 +1,9 @@
 from flask import Blueprint, request
-from app.utils.auth_utils import dm_required
+from app.utils.auth_utils import token_required
 from app.utils.crud_helpers import get_document, create_document, update_document, delete_document, get_all_documents
 from app.models.encounter import Encounter
+
+encounter_bp = Blueprint('encounter_bp', __name__)
 
 @encounter_bp.route('/encounters', methods=['GET'])
 @token_required(required_roles=['is_dm'])

@@ -1,4 +1,4 @@
-from mongoengine import StringField, ListField
+from mongoengine import StringField, IntField
 from app.models.rollable import Rollable
 
 class Encounter(Rollable):

@@ -3,7 +3,7 @@ from app.models.rollable import Rollable
 
 class Room(Rollable):
     type = StringField(default="Room")
-    reward_tier = String(choices=["Bronze", "Silver", "Gold", "Platinum"])
+    reward_tier = StringField(choices=["Bronze", "Silver", "Gold", "Platinum"])
     meta = {
         'collection': 'rollable_rooms'
     }

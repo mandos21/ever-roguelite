@@ -4,12 +4,13 @@ from app.models.user import User
 import jwt
 from datetime import datetime, timedelta
 
+
 def encode_auth_token(user_id, **roles):
     try:
         payload = {
             'exp': datetime.utcnow() + timedelta(days=1),
             'iat': datetime.utcnow(),
-            'sub': str(user_id)A
+            'sub': str(user_id),
             'roles': roles
         }
         return jwt.encode(
@@ -22,7 +23,7 @@ def encode_auth_token(user_id, **roles):
 
 def decode_auth_token(auth_token):
     try:
-        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'), algorithms=['HS256'])
+        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'), algorithm=['HS256'])
         return payload['sub']
     except jwt.ExpiredSignatureError:
         return 'Signature expired. Please log in again.'

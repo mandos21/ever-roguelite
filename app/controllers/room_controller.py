@@ -1,7 +1,10 @@
 from flask import Blueprint, request
-from app.utils.auth_utils import dm_required
+from app.utils.auth_utils import token_required
 from app.utils.crud_helpers import get_document, create_document, update_document, delete_document, get_all_documents
 from app.models.room import Room
+
+
+room_bp = Blueprint('room_bp', __name__)
 
 @room_bp.route('/rooms', methods=['GET'])
 @token_required(required_roles=['is_dm'])

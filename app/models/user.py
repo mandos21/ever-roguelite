@@ -1,5 +1,6 @@
-from mongoengine import EmbeddedDocument, StringField, BooleanField, ListField, EmailField
-from app.models.base import Rollable
+from mongoengine import EmbeddedDocument, StringField, BooleanField, ListField, EmailField, Document, ReferenceField
+from app.models.rolltable import Rollable
+from app.models.item import Item
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(Document):
