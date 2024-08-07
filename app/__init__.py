@@ -9,6 +9,7 @@ from app.controllers.room_controller import room_bp
 from app.controllers.roll_controller import roll_bp
 from app.controllers.encounter_controller import encounter_bp
 from app.controllers.rolltable_controller import rolltable_bp
+from app.controllers.item_controller import item_bp
 
 socketio = SocketIO()
 
@@ -22,10 +23,11 @@ def create_app():
     connect(host=settings.MONGO_URI)
     
     app.register_blueprint(auth_bp, url_prefix='/auth') 
-    app.register_blueprint(user_bp, url_prefix='/user')
-    app.register_blueprint(rolltable_bp, url_prefix='/rolltable')
-    app.register_blueprint(room_bp, url_prefix='/room')
-    app.register_blueprint(encounter_bp, url_prefix='/encounter')
-    app.register_blueprint(roll_bp, url_prefix='/roll')
+    app.register_blueprint(user_bp, url_prefix='/users')
+    app.register_blueprint(rolltable_bp, url_prefix='/rolltables')
+    app.register_blueprint(room_bp, url_prefix='/rooms')
+    app.register_blueprint(encounter_bp, url_prefix='/encounters')
+    app.register_blueprint(roll_bp, url_prefix='/rolls')
+    app.register_blueprint(item_bp, url_prefix='/items')
 
     return app

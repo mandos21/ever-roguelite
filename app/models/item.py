@@ -6,7 +6,7 @@ class Item(Rollable):
     unique = BooleanField(default=True, required=True)
     claimed = BooleanField(default=False, required=True) # for playthrough
     has_been_rolled = BooleanField(default=False, required=True)
-    available = BooleanField(required=True) # for current round of rolling
+    available = BooleanField(default=True) # for current round of rolling
     image_file_location = StringField()
     meta = {
         'collection': 'rollable_items'

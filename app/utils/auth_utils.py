@@ -1,17 +1,22 @@
-from functools import wraps
-from flask import request, jsonify, current_app
-from app.models.user import User
 import jwt
 from datetime import datetime, timedelta
+from flask import current_app, request, jsonify, abort
+from functools import wraps
+from app.models.user import User
+from bson import ObjectId
+import logging
 
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.WARN)
 
-def encode_auth_token(user_id, **roles):
+def encode_auth_token(user_id, is_dm):
     try:
         payload = {
             'exp': datetime.utcnow() + timedelta(days=1),
             'iat': datetime.utcnow(),
             'sub': str(user_id),
-            'roles': roles
+            'is_dm': is_dm
         }
         return jwt.encode(
             payload,
@@ -19,56 +24,60 @@ def encode_auth_token(user_id, **roles):
             algorithm='HS256'
         )
     except Exception as e:
-        return e
+        logger.exception("Failed to encode auth token")
+        return None
 
 def decode_auth_token(auth_token):
     try:
-        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'), algorithm=['HS256'])
-        return payload['sub']
+        payload = jwt.decode(auth_token, current_app.config.get('SECRET_KEY'), algorithms=['HS256'])
+        return payload
     except jwt.ExpiredSignatureError:
-        return 'Signature expired. Please log in again.'
+        logger.warning("Token expired")
+        abort(403, description='Signature expired. Please log in again.')
     except jwt.InvalidTokenError:
-        return 'Invalid token. Please log in again.'
+        logger.warning("Invalid token")
+        abort(403, description='Invalid token. Please log in again.')
 
-def token_required(required_roles=None):
+def token_required(dm_required=False):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            token = None
             auth_header = request.headers.get('Authorization', None)
-            if auth_header:
-                try:
-                    auth_type, token = auth_header.split()
-                except ValueError:
-                    return jsonify({'message': 'Invalid Authorization header format'}), 403
+            if auth_header is None:
+                logger.warning("Authorization header is missing")
+                abort(403, description='Authorization header is missing!')
 
+            try:
+                auth_type, token = auth_header.split()
                 if auth_type.lower() != 'bearer':
-                    return jsonify({'message': 'Invalid token type. Expected Bearer token'}), 403
-            else:
-                return jsonify({'message': 'Authorization header is missing!'}), 403
-            
+                    logger.warning("Invalid token type: %s", auth_type)
+                    abort(403, description='Invalid token type. Expected Bearer token')
+            except ValueError:
+                logger.warning("Invalid Authorization header format")
+                abort(403, description='Invalid Authorization header format')
+
             if not token:
-                return jsonify({'message': 'Token is missing!'}), 403
+                logger.warning("Token is missing")
+                abort(403, description='Token is missing!')
 
             try:
                 payload = decode_auth_token(token)
                 user_id = payload['sub']
                 current_user = User.objects(id=ObjectId(user_id)).first()
 
-                if not current_user:
-                    return jsonify({'message': 'User not found!'}), 403
+                if current_user is None:
+                    logger.warning("User not found")
+                    abort(403, description='User not found!')
 
-                # Check for required roles in the token claims under 'roles'
-                if required_roles:
-                    roles = payload.get('roles', {})
-                    for role in required_roles:
-                        if not roles.get(role, False):
-                            return jsonify({'message': f'Role {role} required!'}), 403
+                if dm_required and not payload.get('is_dm', False):
+                    logger.warning("DM required but not provided in token")
+                    abort(403, description='DM required!')
 
             except Exception as e:
-                return jsonify({'message': str(e)}), 403
+                logger.exception("Token validation error")
+                abort(403, description=str(e))
 
             return f(current_user, *args, **kwargs)
-        
+
         return decorated_function
     return decorator

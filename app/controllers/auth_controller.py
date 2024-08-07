@@ -15,10 +15,11 @@ def register():
         return jsonify({'message': 'Username already exists'}), 400
     if User.objects(email=data['email']).first():
         return jsonify({'message': 'Email already exists'}), 400
-    
+  
     user = User(
         username=data['username'],
-        email=data['email']
+        email=data['email'],
+        is_dm=data['is_dm']
     )
     user.set_password(data['password'])
     user.save()
@@ -29,7 +30,7 @@ def login():
     data = request.get_json()
     user = User.objects(username=data['username']).first()
     if user and user.check_password(data['password']):
-        auth_token = encode_auth_token(user.id)
+        auth_token = encode_auth_token(user.id, user.is_dm)
         if auth_token:
             return jsonify({'token': auth_token}), 200
     return jsonify({'message': 'Invalid credentials'}), 401

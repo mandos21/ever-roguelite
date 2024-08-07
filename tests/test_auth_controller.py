@@ -24,7 +24,8 @@ class AuthControllerTestCase(unittest.TestCase):
         response = self.client.post('/auth/register', json={
             'username': 'testuser',
             'email': 'testuser@example.com',
-            'password': 'password'
+            'password': 'password',
+            'is_dm': True
         })
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json['message'], 'User registered successfully')

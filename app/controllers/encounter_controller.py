@@ -5,22 +5,22 @@ from app.models.encounter import Encounter
 
 encounter_bp = Blueprint('encounter_bp', __name__)
 
-@encounter_bp.route('/encounters', methods=['GET'])
-@token_required(required_roles=['is_dm'])
+@encounter_bp.route('/', methods=['GET'])
+@token_required(dm_required=True)
 def get_encounters(current_user):
     encounter_id = request.args.get('id')
     if encounter_id:
         return get_document_or_404(Encounter, encounter_id)
     return get_all_documents(Encounter)
 
-@encounter_bp.route('/encounters', methods=['POST'])
-@token_required(required_roles=['is_dm'])
+@encounter_bp.route('/', methods=['POST'])
+@token_required(dm_required=True)
 def create_encounter(current_user):
     data = request.get_json()
     return create_document(Encounter, data)
 
-@encounter_bp.route('/encounters/<encounter_id>', methods=['PATCH'])
-@token_required(required_roles=['is_dm'])
+@encounter_bp.route('/<encounter_id>', methods=['PATCH'])
+@token_required(dm_required=True)
 def update_encounter(current_user, encounter_id):
     data = request.get_json()
     encounter = Encounter.objects(id=encounter_id).first()
@@ -28,8 +28,8 @@ def update_encounter(current_user, encounter_id):
         return jsonify({'message': 'Encounter not found!'}), 404
     return update_document(encounter, data)
 
-@encounter_bp.route('/encounters/<encounter_id>', methods=['DELETE'])
-@token_required(required_roles=['is_dm'])
+@encounter_bp.route('/<encounter_id>', methods=['DELETE'])
+@token_required(dm_required=True)
 def delete_encounter(current_user, encounter_id):
     encounter = Encounter.objects(id=encounter_id).first()
     if not encounter:

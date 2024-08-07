@@ -9,7 +9,7 @@ import time
 
 roll_bp = Blueprint('roll_bp', __name__)
 
-@roll_bp.route('/roll', methods=['POST'])
+@roll_bp.route('/', methods=['POST'])
 def perform_roll():
     """
     Roll from a specified table and return unique results.
