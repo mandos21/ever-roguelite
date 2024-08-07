@@ -23,7 +23,6 @@ def get_items(current_user):
                 'id': str(item.id),
                 'name': item.name,
                 'description': item.description,
-                'value': item.value,
                 'image': item.image_file_location,
                 'unique': item.unique
             }

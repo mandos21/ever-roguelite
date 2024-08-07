@@ -12,7 +12,7 @@ class MongoEngineTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Connect to a test database
-        connect('mongoenginetest', alias='default')
+        connect('mongoenginetest', alias='default', uuidRepresentation='standard')
 
     @classmethod
     def tearDownClass(cls):

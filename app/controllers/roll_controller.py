@@ -47,11 +47,11 @@ def perform_roll():
         else:
             return '', 204
 
+
         filter_criteria = {k: v for k, v in constraints.items()}
-        filter_criteria['_id__in'] = [entry.id for entry in entry_ids]
+        filter_criteria['_id'] = {'$in': [entry.id for entry in entry_ids]}
         if entry_model == Item:
             filter_criteria['available'] = True
-
         filtered_entries = list(entry_model.objects(__raw__=filter_criteria))
 
         if not filtered_entries:
