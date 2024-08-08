@@ -33,3 +33,6 @@ def create_app():
     app.register_blueprint(item_bp, url_prefix='/items')
 
     return app
+
+
+app = create_app()
