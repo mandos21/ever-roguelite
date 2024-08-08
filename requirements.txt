@@ -8,6 +8,7 @@ dnspython==2.6.1
 exceptiongroup==1.2.2
 Flask==3.0.3
 Flask-SocketIO==5.3.6
+gunicorn==22.0.0
 h11==0.14.0
 iniconfig==2.0.0
 itsdangerous==2.2.0
