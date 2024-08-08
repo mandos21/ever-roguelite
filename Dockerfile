@@ -12,6 +12,6 @@ RUN export SECRET_KEY=$(openssl rand -base64 32) && echo $SECRET_KEY > /app/secr
 COPY . /app
 
 EXPOSE 8000
-ENV MONGODB_URI=mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DB_NAME}
+ENV MONGODB_URI=mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DB_NAME}
 
 CMD ["gunicorn", "-c", "gunicorn_config.py", "app:app"]
