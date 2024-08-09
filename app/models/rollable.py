@@ -1,4 +1,5 @@
-from mongoengine import Document, StringField, IntField, ListField
+from mongoengine import Document, StringField, IntField
+
 
 class Rollable(Document):
     meta = {'abstract': True}

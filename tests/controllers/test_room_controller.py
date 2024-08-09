@@ -14,7 +14,7 @@ class RoomControllerTestCase(ControllerTestBase):
         response = self.client.post('/rooms/', json=content, headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 201)
         response_data = response.get_json()
-        
+
         # Assert that the _id field is present and then remove it from the response data
         self.assertIsNotNone(response_data.pop("_id", None))
 
@@ -51,6 +51,7 @@ class RoomControllerTestCase(ControllerTestBase):
         response_data = response.get_json()
         self.assertIn('message', response_data)
         self.assertEqual(response_data['message'], 'Room deleted successfully!')
+
 
 if __name__ == '__main__':
     unittest.main()

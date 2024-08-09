@@ -1,14 +1,17 @@
-import jwt
-from datetime import datetime, timedelta
-from flask import current_app, request, jsonify, abort
-from functools import wraps
-from app.models.user import User
-from bson import ObjectId
 import logging
+from datetime import datetime, timedelta
+from functools import wraps
+
+import jwt
+from bson import ObjectId
+from flask import current_app, request, abort
+
+from app.models.user import User
 
 # Set up logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARN)
+
 
 def encode_auth_token(user_id, is_dm):
     try:
@@ -23,9 +26,10 @@ def encode_auth_token(user_id, is_dm):
             current_app.config.get('SECRET_KEY'),
             algorithm='HS256'
         )
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to encode auth token")
         return None
+
 
 def decode_auth_token(auth_token):
     try:
@@ -37,6 +41,7 @@ def decode_auth_token(auth_token):
     except jwt.InvalidTokenError:
         logger.warning("Invalid token")
         abort(403, description='Invalid token. Please log in again.')
+
 
 def token_required(dm_required=False):
     def decorator(f):
@@ -77,7 +82,8 @@ def token_required(dm_required=False):
                 logger.exception("Token validation error")
                 abort(403, description=str(e))
 
-            return f(current_user, *args, **kwargs)
+            return f(*args, **kwargs)
 
         return decorated_function
+
     return decorator

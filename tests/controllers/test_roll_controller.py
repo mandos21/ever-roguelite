@@ -1,12 +1,12 @@
 import unittest
+
+from mongoengine import disconnect
+
 from app import create_app
-from app.models.rolltable import RollTable
-from app.models.item import Item
 from app.models.encounter import Encounter
+from app.models.item import Item
+from app.models.rolltable import RollTable
 from app.models.room import Room
-from mongoengine import connect, disconnect
-from bson import ObjectId
-from flask import json
 
 
 class RollControllerTestCase(unittest.TestCase):

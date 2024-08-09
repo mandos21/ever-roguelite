@@ -1,6 +1,5 @@
-from flask import jsonify
 from bson import ObjectId
-from mongoengine import Document
+from flask import jsonify
 
 
 def get_document(document_class, doc_id):
@@ -12,6 +11,7 @@ def get_document(document_class, doc_id):
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
+
 def create_document(document_class, data):
     try:
         document = document_class(**data)
@@ -19,6 +19,7 @@ def create_document(document_class, data):
         return jsonify(document.to_mongo().to_dict()), 201
     except Exception as e:
         return jsonify({'message': str(e)}), 400
+
 
 def update_document(document, data):
     try:
@@ -28,12 +29,14 @@ def update_document(document, data):
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
+
 def delete_document(document):
     try:
         document.delete()
         return jsonify({'message': f'{document.__class__.__name__} deleted successfully!'}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 400
+
 
 def get_all_documents(document_class):
     try:

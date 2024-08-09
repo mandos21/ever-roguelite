@@ -34,8 +34,6 @@ def perform_roll():
         if not rolltable:
             return jsonify({'message': 'RollTable not found!'}), 404
 
-        entry_model = None
-        entry_ids = []
         if rolltable.items:
             entry_model = Item
             entry_ids = rolltable.items
@@ -57,7 +55,7 @@ def perform_roll():
         if not filtered_entries:
             return '', 204
 
-        results_count = min(num_results, len(filtered_entries))
+        min(num_results, len(filtered_entries))
 
         selected_results = []
         attempts = 0

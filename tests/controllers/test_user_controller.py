@@ -7,7 +7,11 @@ from tests.controllers.controller_test_base import ControllerTestBase
 class UserControllerTestCase(ControllerTestBase):
 
     def test_get_current_user_items(self):
-        item = Item(name='Test Item', description='A test item', unique=True, claimed=False, has_been_rolled=False, available=True)
+        item = Item(name='Test Item',
+                    description='A test item',
+                    unique=True, claimed=False,
+                    has_been_rolled=False,
+                    available=True)
         item.save()
         self.dm_user.items.append(item)
         self.dm_user.save()
@@ -22,11 +26,17 @@ class UserControllerTestCase(ControllerTestBase):
     def test_get_specific_user_items(self):
         other_user = User(username='otheruser', email='otheruser@example.com', is_dm=False)
         other_user.set_password('password')
-        item = Item(name='Other Test Item', description='Another test item', unique=True, claimed=False, has_been_rolled=False, available=True)
+        item = Item(name='Other Test Item',
+                    description='Another test item',
+                    unique=True,
+                    claimed=False,
+                    has_been_rolled=False,
+                    available=True)
         item.save()
         other_user.items.append(item)
         other_user.save()
-        response = self.client.get(f'/users/items?user_id={other_user.id}', headers={'Authorization': f'Bearer {self.token}'})
+        response = self.client.get(f'/users/items?user_id={other_user.id}',
+                                   headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 200)
         response_data = response.get_json()
         self.assertEqual(response_data['username'], 'otheruser')
@@ -36,8 +46,18 @@ class UserControllerTestCase(ControllerTestBase):
     def test_get_all_users_items(self):
         other_user = User(username='otheruser', email='otheruser@example.com', is_dm=False)
         other_user.set_password('password')
-        item1 = Item(name='Test Item 1', description='First test item', unique=True, claimed=False, has_been_rolled=False, available=True)
-        item2 = Item(name='Test Item 2', description='Second test item', unique=True, claimed=False, has_been_rolled=False, available=True)
+        item1 = Item(name='Test Item 1',
+                     description='First test item',
+                     unique=True,
+                     claimed=False,
+                     has_been_rolled=False,
+                     available=True)
+        item2 = Item(name='Test Item 2',
+                     description='Second test item',
+                     unique=True,
+                     claimed=False,
+                     has_been_rolled=False,
+                     available=True)
         item1.save()
         item2.save()
         self.dm_user.items.append(item1)
@@ -57,15 +77,26 @@ class UserControllerTestCase(ControllerTestBase):
     def test_get_all_users_items_exclude_user(self):
         other_user = User(username='otheruser', email='otheruser@example.com', is_dm=False)
         other_user.set_password('password')
-        item1 = Item(name='Test Item 1', description='First test item', unique=True, claimed=False, has_been_rolled=False, available=True)
-        item2 = Item(name='Test Item 2', description='Second test item', unique=True, claimed=False, has_been_rolled=False, available=True)
+        item1 = Item(name='Test Item 1',
+                     description='First test item',
+                     unique=True,
+                     claimed=False,
+                     has_been_rolled=False,
+                     available=True)
+        item2 = Item(name='Test Item 2',
+                     description='Second test item',
+                     unique=True,
+                     claimed=False,
+                     has_been_rolled=False,
+                     available=True)
         item1.save()
         item2.save()
         self.dm_user.items.append(item1)
         other_user.items.append(item2)
         self.dm_user.save()
         other_user.save()
-        response = self.client.get(f'/users/items?all=true&user_id={self.dm_user.id}', headers={'Authorization': f'Bearer {self.token}'})
+        response = self.client.get(f'/users/items?all=true&user_id={self.dm_user.id}',
+                                   headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 200)
         response_data = response.get_json()
         self.assertEqual(len(response_data['users']), 1)
@@ -74,10 +105,12 @@ class UserControllerTestCase(ControllerTestBase):
         self.assertEqual(response_data['users'][0]['items'][0]['name'], 'Test Item 2')
 
     def test_get_user_items_user_not_found(self):
-        response = self.client.get('/users/items?user_id=604c6e206c8e4a7f94b2b2a3', headers={'Authorization': f'Bearer {self.token}'})
+        response = self.client.get('/users/items?user_id=604c6e206c8e4a7f94b2b2a3',
+                                   headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 404)
         response_data = response.get_json()
         self.assertEqual(response_data['message'], 'User not found!')
+
 
 if __name__ == '__main__':
     unittest.main()
