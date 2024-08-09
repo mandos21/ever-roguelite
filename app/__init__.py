@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit
 from mongoengine import connect
 from config.settings import settings
+import logging
 
 from app.controllers.auth_controller import auth_bp
 from app.controllers.user_controller import user_bp
@@ -13,6 +14,7 @@ from app.controllers.item_controller import item_bp
 from app.utils.json_provider import CustomJSONProvider
 
 socketio = SocketIO()
+logging.basicConfig(level=logging.INFO)
 
 def create_app():
     app = Flask(__name__)
@@ -31,6 +33,16 @@ def create_app():
     app.register_blueprint(encounter_bp, url_prefix='/encounters')
     app.register_blueprint(roll_bp, url_prefix='/rolls')
     app.register_blueprint(item_bp, url_prefix='/items')
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        logging.error(f"An error occurred: {e}")
+        response = {
+            "error": "Internal Server Error",
+            "message": str(e)
+        }
+        return jsonify(response), 500
+
 
     return app
 
