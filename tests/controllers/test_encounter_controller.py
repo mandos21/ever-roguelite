@@ -1,37 +1,9 @@
 import unittest
-from app import create_app
 from app.models.encounter import Encounter
-from app.models.user import User
-from mongoengine import connect, disconnect
-from flask import json
+from tests.controllers.controller_test_base import ControllerTestBase
 
-class EncounterControllerTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config['TESTING'] = True
-        cls.client = cls.app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        disconnect(alias='default')
-
-    def setUp(self):
-        Encounter.drop_collection()
-        User.drop_collection()
-        self.dm_user = User(username='dmuser', email='dmuser@example.com', is_dm=True)
-        self.dm_user.set_password('password')
-        self.dm_user.save()
-        response = self.client.post('/auth/login', json={
-            'username': 'dmuser',
-            'password': 'password'
-        })
-        self.token = response.json['token']
-
-    def tearDown(self):
-        Encounter.drop_collection()
-        User.drop_collection()
+class EncounterControllerTestCase(ControllerTestBase):
 
     def test_create_encounter(self):
         content = {
@@ -43,7 +15,7 @@ class EncounterControllerTestCase(unittest.TestCase):
         response = self.client.post('/encounters/', json=content, headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 201)
         response_data = response.get_json()
-        
+
         self.assertIsNotNone(response_data.pop("_id", None))
 
         for key, value in content.items():
@@ -78,6 +50,7 @@ class EncounterControllerTestCase(unittest.TestCase):
         response_data = response.get_json()
         self.assertIn('message', response_data)
         self.assertEqual(response_data['message'], 'Encounter deleted successfully!')
+
 
 if __name__ == '__main__':
     unittest.main()

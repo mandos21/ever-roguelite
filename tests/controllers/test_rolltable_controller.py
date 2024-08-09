@@ -1,38 +1,9 @@
 import unittest
-from app import create_app
 from app.models.rolltable import RollTable
-from app.models.user import User
-from mongoengine import connect, disconnect
-from flask import json
+from tests.controllers.controller_test_base import ControllerTestBase
 
-class RollTableControllerTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config['TESTING'] = True
-        cls.client = cls.app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        disconnect(alias='default')
-
-    def setUp(self):
-        RollTable.drop_collection()
-        User.drop_collection()
-        # Create a DM user and log in for authenticated routes
-        self.dm_user = User(username='dmuser', email='dmuser@example.com', is_dm=True)
-        self.dm_user.set_password('password')
-        self.dm_user.save()
-        response = self.client.post('/auth/login', json={
-            'username': 'dmuser',
-            'password': 'password'
-        })
-        self.token = response.json['token']
-
-    def tearDown(self):
-        RollTable.drop_collection()
-        User.drop_collection()
+class RollTableControllerTestCase(ControllerTestBase):
 
     def test_create_rolltable(self):
         content = {

@@ -1,24 +1,26 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.utils.auth_utils import token_required
 from app.utils.crud_helpers import get_document, create_document, update_document, delete_document, get_all_documents
 from app.models.rolltable import RollTable
 
-
 rolltable_bp = Blueprint('rolltable_bp', __name__)
+
 
 @rolltable_bp.route('/', methods=['GET'])
 @token_required(dm_required=True)
 def get_rolltables(current_user):
     rolltable_id = request.args.get('id')
     if rolltable_id:
-        return get_document_or_404(RollTable, rolltable_id)
+        return get_document(RollTable, rolltable_id)
     return get_all_documents(RollTable)
+
 
 @rolltable_bp.route('/', methods=['POST'])
 @token_required(dm_required=True)
 def create_rolltable(current_user):
     data = request.get_json()
     return create_document(RollTable, data)
+
 
 @rolltable_bp.route('/<rolltable_id>', methods=['PATCH'])
 @token_required(dm_required=True)
@@ -28,6 +30,7 @@ def update_rolltable(current_user, rolltable_id):
     if not rolltable:
         return jsonify({'message': 'RollTable not found!'}), 404
     return update_document(rolltable, data)
+
 
 @rolltable_bp.route('/<rolltable_id>', methods=['DELETE'])
 @token_required(dm_required=True)

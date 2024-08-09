@@ -1,13 +1,10 @@
 from flask import Blueprint, request, jsonify
 from app.models.user import User
 from app.utils.auth_utils import encode_auth_token
-from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
 import base64
-from datetime import datetime, timedelta
-from flask import current_app
 
 auth_bp = Blueprint('auth_bp', __name__)
+
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -16,7 +13,7 @@ def register():
         return jsonify({'message': 'Username already exists'}), 400
     if User.objects(email=data['email']).first():
         return jsonify({'message': 'Email already exists'}), 400
-  
+
     user = User(
         username=data['username'],
         email=data['email'],
@@ -25,6 +22,7 @@ def register():
     user.set_password(data['password'])
     user.save()
     return jsonify({'message': 'User registered successfully'}), 201
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():

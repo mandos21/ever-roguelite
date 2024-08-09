@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.utils.auth_utils import token_required
 from app.utils.crud_helpers import get_document, create_document, update_document, delete_document, get_all_documents
 from app.models.encounter import Encounter
@@ -10,7 +10,7 @@ encounter_bp = Blueprint('encounter_bp', __name__)
 def get_encounters(current_user):
     encounter_id = request.args.get('id')
     if encounter_id:
-        return get_document_or_404(Encounter, encounter_id)
+        return get_document(Encounter, encounter_id)
     return get_all_documents(Encounter)
 
 @encounter_bp.route('/', methods=['POST'])

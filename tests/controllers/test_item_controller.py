@@ -1,37 +1,9 @@
 import unittest
-from app import create_app
 from app.models.item import Item
-from app.models.user import User
-from mongoengine import connect, disconnect
+from tests.controllers.controller_test_base import ControllerTestBase
 
-class ItemControllerTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config['TESTING'] = True
-        cls.client = cls.app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        disconnect(alias='default')
-
-    def setUp(self):
-        Item.drop_collection()
-        User.drop_collection()
-        # Create a DM user and log in for authenticated routes
-        self.dm_user = User(username='dmuser', email='dmuser@example.com', is_dm=True)
-        self.dm_user.set_password('password')
-        self.dm_user.save()
-        response = self.client.post('/auth/login', json={
-            'username': 'dmuser',
-            'password': 'password'
-        })
-        self.token = response.json['token']
-
-    def tearDown(self):
-        Item.drop_collection()
-        User.drop_collection()
+class ItemControllerTestCase(ControllerTestBase):
 
     def test_create_item(self):
         content = {
@@ -40,15 +12,15 @@ class ItemControllerTestCase(unittest.TestCase):
             'unique': True,
             'claimed': False,
             'has_been_rolled': False,
-            'available': True                                                                                                                     }
+            'available': True
+        }
         response = self.client.post('/items/', json=content, headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 201)
         response_data = response.get_json()
         self.assertIsNotNone(response_data.pop("_id", None))
 
-        for k,v in content.items():
+        for k, v in content.items():
             self.assertEqual(response_data[k], v)
-
 
     def test_get_items(self):
         item = Item(name='Test Item', description='An item', unique=True)
@@ -79,6 +51,7 @@ class ItemControllerTestCase(unittest.TestCase):
         response_data = response.get_json()
         self.assertIn('message', response_data)
         self.assertEqual(response_data['message'], 'Item deleted successfully!')
+
 
 if __name__ == '__main__':
     unittest.main()

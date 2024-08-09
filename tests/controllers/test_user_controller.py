@@ -1,38 +1,10 @@
 import unittest
-from app import create_app
 from app.models.user import User
 from app.models.item import Item
-from mongoengine import connect, disconnect
-from flask import json
+from tests.controllers.controller_test_base import ControllerTestBase
 
-class UserControllerTestCase(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.app = create_app()
-        cls.app.config['TESTING'] = True
-        cls.client = cls.app.test_client()
-
-    @classmethod
-    def tearDownClass(cls):
-        disconnect(alias='default')
-
-    def setUp(self):
-        User.drop_collection()
-        Item.drop_collection()
-        # Create a DM user and log in for authenticated routes
-        self.dm_user = User(username='dmuser', email='dmuser@example.com', is_dm=True)
-        self.dm_user.set_password('password')
-        self.dm_user.save()
-        response = self.client.post('/auth/login', json={
-            'username': 'dmuser',
-            'password': 'password'
-        })
-        self.token = response.json['token']
-
-    def tearDown(self):
-        User.drop_collection()
-        Item.drop_collection()
+class UserControllerTestCase(ControllerTestBase):
 
     def test_get_current_user_items(self):
         item = Item(name='Test Item', description='A test item', unique=True, claimed=False, has_been_rolled=False, available=True)

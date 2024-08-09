@@ -1,7 +1,9 @@
 import unittest
 from app import create_app
 from app.models.user import User
-from mongoengine import connect, disconnect
+from mongoengine import disconnect
+import base64
+
 
 class AuthControllerTestCase(unittest.TestCase):
 
@@ -17,7 +19,6 @@ class AuthControllerTestCase(unittest.TestCase):
         disconnect(alias='default')
 
     def setUp(self):
-        #connect('mongoenginetest', alias='default')
         User.drop_collection()
 
     def test_register_user(self):
@@ -41,23 +42,32 @@ class AuthControllerTestCase(unittest.TestCase):
         self.assertEqual(response.json['message'], 'Username already exists')
 
     def test_login_user(self):
+        # Create the test user in the database
         user = User(username='testuser', email='testuser@example.com')
         user.set_password('password')
         user.save()
-        response = self.client.post('/auth/login', json={
-            'username': 'testuser',
-            'password': 'password'
+
+        # Encode the credentials in Base64
+        credentials = base64.b64encode(b'testuser:password').decode('utf-8')
+
+        # Send the request with the Authorization header
+        response = self.client.post('/auth/login', headers={
+            'Authorization': f'Basic {credentials}'
         })
         self.assertEqual(response.status_code, 200)
         self.assertIn('token', response.json)
 
     def test_login_user_invalid_credentials(self):
-        response = self.client.post('/auth/login', json={
-            'username': 'wronguser',
-            'password': 'password'
+        # Encode incorrect credentials in Base64
+        credentials = base64.b64encode(b'wronguser:password').decode('utf-8')
+
+        # Send the request with the Authorization header
+        response = self.client.post('/auth/login', headers={
+            'Authorization': f'Basic {credentials}'
         })
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json['message'], 'Invalid credentials')
+
 
 if __name__ == '__main__':
     unittest.main()

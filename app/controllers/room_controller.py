@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.utils.auth_utils import token_required
 from app.utils.crud_helpers import get_document, create_document, update_document, delete_document, get_all_documents
 from app.models.room import Room
@@ -11,7 +11,7 @@ room_bp = Blueprint('room_bp', __name__)
 def get_rooms(current_user):
     room_id = request.args.get('id')
     if room_id:
-        return get_document_or_404(Room, room_id)
+        return get_document(Room, room_id)
     return get_all_documents(Room)
 
 @room_bp.route('/', methods=['POST'])

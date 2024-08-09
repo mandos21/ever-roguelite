@@ -9,6 +9,7 @@ import time
 
 roll_bp = Blueprint('roll_bp', __name__)
 
+
 @roll_bp.route('/', methods=['POST'])
 def perform_roll():
     """
@@ -46,7 +47,6 @@ def perform_roll():
             entry_ids = rolltable.rooms
         else:
             return '', 204
-
 
         filter_criteria = {k: v for k, v in constraints.items()}
         filter_criteria['_id'] = {'$in': [entry.id for entry in entry_ids]}

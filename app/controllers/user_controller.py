@@ -5,6 +5,7 @@ from bson import ObjectId
 
 user_bp = Blueprint('user_bp', __name__)
 
+
 @user_bp.route('/items', methods=['GET'])
 @token_required()
 def get_items(current_user):

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from mongoengine import connect
 from config.settings import settings
@@ -16,17 +16,17 @@ from app.utils.json_provider import CustomJSONProvider
 socketio = SocketIO()
 logging.basicConfig(level=logging.INFO)
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(settings)
     app.json = CustomJSONProvider(app)
-    
+
     socketio.init_app(app)
 
-
     connect(host=settings.MONGO_URI, uuidRepresentation='standard')
-    
-    app.register_blueprint(auth_bp, url_prefix='/auth') 
+
+    app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/users')
     app.register_blueprint(rolltable_bp, url_prefix='/rolltables')
     app.register_blueprint(room_bp, url_prefix='/rooms')
@@ -42,7 +42,6 @@ def create_app():
             "message": str(e)
         }
         return jsonify(response), 500
-
 
     return app
 

@@ -1,16 +1,17 @@
 import unittest
 from mongoengine import connect, disconnect
-from app.models.rollable import Rollable
 from app.models.encounter import Encounter
 from app.models.item import Item
 from app.models.rolltable import RollTable
 from app.models.room import Room
 from app.models.user import User
 
+
 class MongoEngineTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        pass
         # Connect to a test database
         connect('mongoenginetest', alias='default', uuidRepresentation='standard')
 
@@ -35,7 +36,8 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertEqual(encounter.max_players, 4)
 
     def test_item_creation(self):
-        item = Item(name="Test Item", description="An item", unique=True, claimed=False, has_been_rolled=False, available=True)
+        item = Item(name="Test Item", description="An item", unique=True, claimed=False, has_been_rolled=False,
+                    available=True)
         item.save()
         self.assertEqual(item.type, "Item")
         self.assertTrue(item.unique)
@@ -44,7 +46,8 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertTrue(item.available)
 
     def test_rolltable_creation(self):
-        rolltable = RollTable(name="Test RollTable", description="A rolltable", weight=5, tier="Gold", table_type="Magic Items")
+        rolltable = RollTable(name="Test RollTable", description="A rolltable", weight=5, tier="Gold",
+                              table_type="Magic Items")
         rolltable.save()
         self.assertEqual(rolltable.tier, "Gold")
         self.assertEqual(rolltable.table_type, "Magic Items")
@@ -56,7 +59,8 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertEqual(room.reward_tier, "Silver")
 
     def test_user_creation(self):
-        user = User(username="testuser", email="testuser@example.com", password_hash="password_hash", is_active=True, is_dm=True)
+        user = User(username="testuser", email="testuser@example.com", password_hash="password_hash", is_active=True,
+                    is_dm=True)
         user.set_password("password")
         user.save()
         self.assertEqual(user.username, "testuser")
@@ -66,14 +70,18 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertTrue(user.check_password("password"))
 
     def test_rolltable_with_items(self):
-        item1 = Item(name="Item1", description="First item", unique=True, claimed=False, has_been_rolled=False, available=True).save()
-        item2 = Item(name="Item2", description="Second item", unique=True, claimed=False, has_been_rolled=False, available=True).save()
-        rolltable = RollTable(name="Item RollTable", description="Table of items", weight=1, tier="Bronze", table_type="Magic Items", items=[item1, item2])
+        item1 = Item(name="Item1", description="First item", unique=True, claimed=False, has_been_rolled=False,
+                     available=True).save()
+        item2 = Item(name="Item2", description="Second item", unique=True, claimed=False, has_been_rolled=False,
+                     available=True).save()
+        rolltable = RollTable(name="Item RollTable", description="Table of items", weight=1, tier="Bronze",
+                              table_type="Magic Items", items=[item1, item2])
         rolltable.save()
         retrieved_rolltable = RollTable.objects(id=rolltable.id).first()
         self.assertEqual(len(retrieved_rolltable.items), 2)
         self.assertIn(item1, retrieved_rolltable.items)
         self.assertIn(item2, retrieved_rolltable.items)
+
 
 if __name__ == '__main__':
     unittest.main()
