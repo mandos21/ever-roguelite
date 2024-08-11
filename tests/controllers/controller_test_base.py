@@ -1,8 +1,10 @@
-import unittest
 import base64
+import unittest
+
+from mongoengine import disconnect, get_db
+
 from app import create_app
 from app.models.user import User
-from mongoengine import disconnect, get_db
 
 
 def drop_all_collections():
@@ -35,4 +37,3 @@ class ControllerTestBase(unittest.TestCase):
             'Authorization': f'Basic {credentials}'
         })
         self.token = response.json['token']
-

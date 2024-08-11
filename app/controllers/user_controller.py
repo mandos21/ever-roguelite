@@ -7,6 +7,23 @@ from app.utils.auth_utils import token_required
 user_bp = Blueprint('user_bp', __name__)
 
 
+@user_bp.route('/', methods=['GET'])
+@token_required(dm_required=True)
+def get_users(**kwargs):
+    users = User.objects().all()
+    users_list = []
+    for user in users:
+        users_list.append({
+            'id': str(user.id),
+            'username': user.username,
+            'email': user.email,
+            'is_active': user.is_active,
+            'is_dm': user.is_dm
+        })
+
+    return jsonify(users_list), 200
+
+
 @user_bp.route('/items', methods=['GET'])
 @token_required()
 def get_items(*args, **kwargs):

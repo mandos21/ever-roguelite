@@ -3,6 +3,7 @@ import logging
 from flask import Flask, jsonify
 from flask_socketio import SocketIO
 from mongoengine import connect
+from werkzeug.exceptions import HTTPException
 
 from app.controllers.auth_controller import auth_bp
 from app.controllers.encounter_controller import encounter_bp
@@ -34,6 +35,15 @@ def create_app():
     flask_app.register_blueprint(encounter_bp, url_prefix='/encounters')
     flask_app.register_blueprint(roll_bp, url_prefix='/rolls')
     flask_app.register_blueprint(item_bp, url_prefix='/items')
+
+    @flask_app.errorhandler(HTTPException)
+    def handle_http_exception(e):
+        logging.warning(f"HTTP error occurred: {e}")
+        response = {
+            "error": e.name,
+            "message": e.description
+        }
+        return jsonify(response), e.code
 
     @flask_app.errorhandler(Exception)
     def handle_exception(e):

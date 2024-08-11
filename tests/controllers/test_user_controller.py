@@ -1,6 +1,8 @@
+import base64
 import unittest
-from app.models.user import User
+
 from app.models.item import Item
+from app.models.user import User
 from tests.controllers.controller_test_base import ControllerTestBase
 
 
@@ -110,6 +112,51 @@ class UserControllerTestCase(ControllerTestBase):
         self.assertEqual(response.status_code, 404)
         response_data = response.get_json()
         self.assertEqual(response_data['message'], 'User not found!')
+
+    def test_get_users_as_dm(self):
+        self.regular_user = User(username='regular_user', email='regular@example.com', is_dm=False)
+        self.regular_user.set_password('password')
+        self.regular_user.save()
+
+        credentials = base64.b64encode(b'regular_user:password').decode('utf-8')
+        response = self.client.post('/auth/login', headers={
+            'Authorization': f'Basic {credentials}'
+        })
+        self.non_admin_token = response.json['token']
+
+        # Test that DM can access the user list
+        response = self.client.get('/users/', headers={
+            'Authorization': f'Bearer {self.token}'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 2)
+        usernames = [user['username'] for user in response.json]
+        self.assertIn('dmuser', usernames)
+        self.assertIn('regular_user', usernames)
+
+    def test_get_users_as_non_dm(self):
+        self.regular_user = User(username='regular_user', email='regular@example.com', is_dm=False)
+        self.regular_user.set_password('password')
+        self.regular_user.save()
+
+        credentials = base64.b64encode(b'regular_user:password').decode('utf-8')
+        response = self.client.post('/auth/login', headers={
+            'Authorization': f'Basic {credentials}'
+        })
+        self.non_admin_token = response.json['token']
+
+        # Test that a non-DM cannot access the user list
+        response = self.client.get('/users/', headers={
+            'Authorization': f'Bearer {self.non_admin_token}'
+        })
+        print(response.json)
+        self.assertEqual(response.status_code, 403)  # Forbidden
+
+    def test_get_users_no_token(self):
+        # Test that no token results in unauthorized access
+        response = self.client.get('/users/')
+        print(response.json)
+        self.assertEqual(response.status_code, 403)  # Forbidden
 
 
 if __name__ == '__main__':
