@@ -1,14 +1,15 @@
-from flask import Blueprint, jsonify, request
-from app.utils.auth_utils import token_required
-from app.models.user import User
 from bson import ObjectId
+from flask import Blueprint, jsonify, request
+
+from app.models.user import User
+from app.utils.auth_utils import token_required
 
 user_bp = Blueprint('user_bp', __name__)
 
 
 @user_bp.route('/items', methods=['GET'])
 @token_required()
-def get_items(current_user):
+def get_items(*args, **kwargs):
     """
     Get items based on the provided parameters:
     - If `user_id` is provided, return that user's items.
@@ -46,7 +47,7 @@ def get_items(current_user):
             return jsonify({'users': users_data}), 200
 
         else:
-            target_user_id = ObjectId(user_id) if user_id else current_user.id
+            target_user_id = ObjectId(user_id) if user_id else kwargs['current_user'].id
             user = User.objects(id=target_user_id).first()
 
             if not user:

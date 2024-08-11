@@ -1,17 +1,19 @@
-from flask import Blueprint, request, jsonify
-from app.models.rolltable import RollTable
-from app.models.item import Item
-from app.models.encounter import Encounter
-from app.models.room import Room
-from bson import ObjectId
-from random import sample
 import time
+from random import sample
+
+from bson import ObjectId
+from flask import Blueprint, request, jsonify
+
+from app.models.encounter import Encounter
+from app.models.item import Item
+from app.models.rolltable import RollTable
+from app.models.room import Room
 
 roll_bp = Blueprint('roll_bp', __name__)
 
 
 @roll_bp.route('/', methods=['POST'])
-def perform_roll():
+def perform_roll(**kwargs):
     """
     Roll from a specified table and return unique results.
     Request JSON:

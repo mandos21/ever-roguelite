@@ -69,6 +69,7 @@ def token_required(dm_required=False):
                 payload = decode_auth_token(token)
                 user_id = payload['sub']
                 current_user = User.objects(id=ObjectId(user_id)).first()
+                kwargs['current_user'] = current_user
 
                 if current_user is None:
                     logger.warning("User not found")

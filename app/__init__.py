@@ -44,6 +44,22 @@ def create_app():
         }
         return jsonify(response), 500
 
+    @flask_app.errorhandler(404)
+    def handle_404_error(e):
+        response = {
+            "error": "Not Found",
+            "message": "The requested resource could not be found"
+        }
+        return jsonify(response), 404
+
+    @flask_app.errorhandler(400)
+    def handle_400_error(e):
+        response = {
+            "error": "Bad Request",
+            "message": "The request could not be understood or was missing required parameters"
+        }
+        return jsonify(response), 400
+
     return flask_app
 
 
