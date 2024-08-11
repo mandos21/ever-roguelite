@@ -7,11 +7,10 @@ from app.utils.crud_helpers import get_document, create_document, update_documen
 encounter_bp = Blueprint('encounter_bp', __name__)
 
 
-@encounter_bp.route('/', defaults={'room_id': None})
+@encounter_bp.route('/', defaults={'encounter_id': None})
 @encounter_bp.route('/<encounter_id>', methods=['GET'])
 @token_required(dm_required=True)
-def get_encounters(**kwargs):
-    encounter_id = request.args.get('encounter_id')
+def get_encounters(encounter_id, **kwargs):
     if encounter_id:
         return get_document(Encounter, encounter_id)
     return get_all_documents(Encounter)

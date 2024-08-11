@@ -10,8 +10,7 @@ room_bp = Blueprint('room_bp', __name__)
 @room_bp.route('/', defaults={'room_id': None})
 @room_bp.route('/<room_id>', methods=['GET'])
 @token_required(dm_required=True)
-def get_rooms(**kwargs):
-    room_id = request.args.get('room_id')
+def get_rooms(room_id, **kwargs):
     if room_id:
         return get_document(Room, room_id)
     return get_all_documents(Room)

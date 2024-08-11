@@ -10,8 +10,7 @@ rolltable_bp = Blueprint('rolltable_bp', __name__)
 @rolltable_bp.route('/', defaults={'rolltable_id': None})
 @rolltable_bp.route('/<rolltable_id>', methods=['GET'])
 @token_required(dm_required=True)
-def get_rolltables(**kwargs):
-    rolltable_id = request.args.get('rolltable_id')
+def get_rolltables(rolltable_id, **kwargs):
     if rolltable_id:
         return get_document(RollTable, rolltable_id)
     return get_all_documents(RollTable)

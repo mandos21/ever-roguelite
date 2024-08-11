@@ -10,8 +10,7 @@ item_bp = Blueprint('item_bp', __name__)
 @item_bp.route('/', defaults={'item_id': None})
 @item_bp.route('/<item_id>', methods=['GET'])
 @token_required(dm_required=True)
-def get_items(**kwargs):
-    item_id = request.args.get('item_id')
+def get_items(item_id, **kwargs):
     if item_id:
         return get_document(Item, item_id)
     return get_all_documents(Item)
