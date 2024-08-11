@@ -7,10 +7,11 @@ from app.utils.crud_helpers import get_document, create_document, update_documen
 rolltable_bp = Blueprint('rolltable_bp', __name__)
 
 
-@rolltable_bp.route('/', methods=['GET'])
+@rolltable_bp.route('/', defaults={'rolltable_id': None})
+@rolltable_bp.route('/<rolltable_id>', methods=['GET'])
 @token_required(dm_required=True)
 def get_rolltables(**kwargs):
-    rolltable_id = request.args.get('id')
+    rolltable_id = request.args.get('rolltable_id')
     if rolltable_id:
         return get_document(RollTable, rolltable_id)
     return get_all_documents(RollTable)

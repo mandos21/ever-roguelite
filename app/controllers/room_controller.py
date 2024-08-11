@@ -7,10 +7,11 @@ from app.utils.crud_helpers import get_document, create_document, update_documen
 room_bp = Blueprint('room_bp', __name__)
 
 
-@room_bp.route('/', methods=['GET'])
+@room_bp.route('/', defaults={'room_id': None})
+@room_bp.route('/<room_id>', methods=['GET'])
 @token_required(dm_required=True)
 def get_rooms(**kwargs):
-    room_id = request.args.get('id')
+    room_id = request.args.get('room_id')
     if room_id:
         return get_document(Room, room_id)
     return get_all_documents(Room)

@@ -7,7 +7,7 @@ def get_document(document_class, doc_id):
         document = document_class.objects(id=ObjectId(doc_id)).first()
         if not document:
             return jsonify({'message': f'{document_class.__name__} not found!'}), 404
-        return document
+        return jsonify(document), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
