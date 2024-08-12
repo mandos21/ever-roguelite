@@ -1,6 +1,6 @@
 import unittest
 from app.models.room import Room
-from tests.controllers.controller_test_base import ControllerTestBase
+from tests.views.test_view_base import ControllerTestBase
 
 
 class RoomControllerTestCase(ControllerTestBase):

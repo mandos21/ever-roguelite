@@ -1,6 +1,6 @@
 import unittest
 from app.models.encounter import Encounter
-from tests.controllers.controller_test_base import ControllerTestBase
+from tests.views.test_view_base import ControllerTestBase
 
 
 class EncounterControllerTestCase(ControllerTestBase):

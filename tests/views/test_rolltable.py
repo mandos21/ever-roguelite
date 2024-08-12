@@ -2,7 +2,7 @@ import unittest
 
 from app.models.item import Item
 from app.models.rolltable import RollTable
-from tests.controllers.controller_test_base import ControllerTestBase
+from tests.views.test_view_base import ControllerTestBase
 
 
 class RollTableControllerTestCase(ControllerTestBase):

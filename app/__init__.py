@@ -5,13 +5,13 @@ from flask_socketio import SocketIO
 from mongoengine import connect
 from werkzeug.exceptions import HTTPException
 
-from app.controllers.auth_controller import auth_bp
-from app.controllers.encounter_controller import encounter_bp
-from app.controllers.item_controller import item_bp
-from app.controllers.roll_controller import roll_bp
-from app.controllers.rolltable_controller import rolltable_bp
-from app.controllers.room_controller import room_bp
-from app.controllers.user_controller import user_bp
+from app.views.auth import auth_bp
+from app.views.encounter import encounter_bp
+from app.views.item import item_bp
+from app.views.roll import roll_bp
+from app.views.rolltable import rolltable_bp
+from app.views.room import room_bp
+from app.views.user import user_bp
 from app.utils.json_provider import CustomJSONProvider
 from config.settings import settings
 
