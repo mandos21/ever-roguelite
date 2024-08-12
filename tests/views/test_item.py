@@ -1,7 +1,7 @@
 import unittest
 
 from app.models.item import Item
-from tests.controllers.controller_test_base import ControllerTestBase
+from tests.views.test_view_base import ControllerTestBase
 
 
 class ItemControllerTestCase(ControllerTestBase):
