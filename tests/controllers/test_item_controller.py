@@ -38,7 +38,6 @@ class ItemControllerTestCase(ControllerTestBase):
         item = Item(name='Test Item', description='An item', unique=True)
         item.save()
         response = self.client.get(f"/items/{item.id}", headers={'Authorization': f'Bearer {self.token}'})
-        print(response)
         self.assertEqual(response.status_code, 200)
 
     def test_update_item(self):

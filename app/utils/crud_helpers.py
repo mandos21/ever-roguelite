@@ -23,8 +23,20 @@ def create_document(document_class, data):
 
 def update_document(document, data):
     try:
+        for key in ['items', 'rooms', 'encounters']:
+            if key in data.keys():
+                data.pop(key)
         document.update(**data)
         document.reload()  # Reload to get updated document
+        return jsonify(document.to_mongo().to_dict()), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+
+def modify_document(document, data):
+    try:
+        document.modify(**data)
+        document.reload()
         return jsonify(document.to_mongo().to_dict()), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 400

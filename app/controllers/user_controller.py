@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request
 
 from app.models.user import User
 from app.utils.auth_utils import token_required
+from app.utils.crud_helpers import modify_document
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -22,6 +23,23 @@ def get_users(**kwargs):
         })
 
     return jsonify(users_list), 200
+
+
+@user_bp.route('/<user_id>/add', methods=['POST'])
+@token_required(dm_required=True)
+def add_to_rolltable(user_id, **kwargs):
+    data = request.get_json()
+    user = User.objects(id=ObjectId(user_id)).first()
+    if not user:
+        return jsonify({'message': 'User not found!'}), 404
+    update_data = {}
+
+    if 'items' in data.keys():
+        update_data['add_to_set__items'] = data['items']
+    else:
+        return jsonify({'message': 'No valid fields to update!'}), 400
+
+    return modify_document(user, update_data)
 
 
 @user_bp.route('/items', methods=['GET'])

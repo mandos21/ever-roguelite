@@ -8,14 +8,20 @@ from tests.controllers.controller_test_base import ControllerTestBase
 
 class UserControllerTestCase(ControllerTestBase):
 
+    def setUp(self):
+        super().setUp()
+        self.user = User(username='user', email='regular@example.com', is_dm=True)
+        self.user.set_password('password')
+        self.user.save()
+
+        self.item = Item(name='Test Item',
+                         description='A test item',
+                         unique=True, claimed=False,
+                         has_been_rolled=False,
+                         available=True).save()
+
     def test_get_current_user_items(self):
-        item = Item(name='Test Item',
-                    description='A test item',
-                    unique=True, claimed=False,
-                    has_been_rolled=False,
-                    available=True)
-        item.save()
-        self.dm_user.items.append(item)
+        self.dm_user.items.append(self.item)
         self.dm_user.save()
         response = self.client.get('/users/items', headers={'Authorization': f'Bearer {self.token}'})
 
@@ -28,14 +34,7 @@ class UserControllerTestCase(ControllerTestBase):
     def test_get_specific_user_items(self):
         other_user = User(username='otheruser', email='otheruser@example.com', is_dm=False)
         other_user.set_password('password')
-        item = Item(name='Other Test Item',
-                    description='Another test item',
-                    unique=True,
-                    claimed=False,
-                    has_been_rolled=False,
-                    available=True)
-        item.save()
-        other_user.items.append(item)
+        other_user.items.append(self.item)
         other_user.save()
         response = self.client.get(f'/users/items?user_id={other_user.id}',
                                    headers={'Authorization': f'Bearer {self.token}'})
@@ -43,7 +42,7 @@ class UserControllerTestCase(ControllerTestBase):
         response_data = response.get_json()
         self.assertEqual(response_data['username'], 'otheruser')
         self.assertEqual(len(response_data['items']), 1)
-        self.assertEqual(response_data['items'][0]['name'], 'Other Test Item')
+        self.assertEqual(response_data['items'][0]['name'], 'Test Item')
 
     def test_get_all_users_items(self):
         other_user = User(username='otheruser', email='otheruser@example.com', is_dm=False)
@@ -69,7 +68,7 @@ class UserControllerTestCase(ControllerTestBase):
         response = self.client.get('/users/items?all=true', headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 200)
         response_data = response.get_json()
-        self.assertEqual(len(response_data['users']), 2)
+        self.assertEqual(len(response_data['users']), 3)
         user_data = {user['username']: user for user in response_data['users']}
         self.assertEqual(len(user_data['dmuser']['items']), 1)
         self.assertEqual(user_data['dmuser']['items'][0]['name'], 'Test Item 1')
@@ -101,10 +100,10 @@ class UserControllerTestCase(ControllerTestBase):
                                    headers={'Authorization': f'Bearer {self.token}'})
         self.assertEqual(response.status_code, 200)
         response_data = response.get_json()
-        self.assertEqual(len(response_data['users']), 1)
-        self.assertEqual(response_data['users'][0]['username'], 'otheruser')
-        self.assertEqual(len(response_data['users'][0]['items']), 1)
-        self.assertEqual(response_data['users'][0]['items'][0]['name'], 'Test Item 2')
+        self.assertEqual(len(response_data['users']), 2)
+        self.assertEqual(response_data['users'][1]['username'], 'otheruser')
+        self.assertEqual(len(response_data['users'][1]['items']), 1)
+        self.assertEqual(response_data['users'][1]['items'][0]['name'], 'Test Item 2')
 
     def test_get_user_items_user_not_found(self):
         response = self.client.get('/users/items?user_id=604c6e206c8e4a7f94b2b2a3',
@@ -129,7 +128,7 @@ class UserControllerTestCase(ControllerTestBase):
             'Authorization': f'Bearer {self.token}'
         })
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json), 2)
+        self.assertEqual(len(response.json), 3)
         usernames = [user['username'] for user in response.json]
         self.assertIn('dmuser', usernames)
         self.assertIn('regular_user', usernames)
@@ -149,7 +148,6 @@ class UserControllerTestCase(ControllerTestBase):
         response = self.client.get('/users/', headers={
             'Authorization': f'Bearer {self.non_admin_token}'
         })
-        print(response.json)
         self.assertEqual(response.status_code, 403)  # Forbidden
 
     def test_get_users_no_token(self):
@@ -157,6 +155,47 @@ class UserControllerTestCase(ControllerTestBase):
         response = self.client.get('/users/')
         print(response.json)
         self.assertEqual(response.status_code, 403)  # Forbidden
+
+    def test_add_item_to_user(self):
+        data = {"items": [str(self.item.id)]}
+        response = self.client.post(f'/users/{self.user.id}/add', json=data, headers={
+            'Authorization': f'Bearer {self.token}'
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("items", response.json)
+        self.assertEqual(len(response.json["items"]), 1)
+        self.assertEqual(response.json["items"][0], str(self.item.id))
+
+    def test_add_to_nonexistent_user(self):
+        data = {
+            "items": [str(self.item.id)]
+        }
+        response = self.client.post('/users/507f1f77bcf86cd799439011/add', json=data, headers={
+            'Authorization': f'Bearer {self.token}'
+        })
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json['message'], 'User not found!')
+
+    def test_add_invalid_data_to_user(self):
+        data = {
+            "invalid_field": "invalid_value"
+        }
+        response = self.client.post(f'/users/{self.user.id}/add', json=data, headers={
+            'Authorization': f'Bearer {self.token}'
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json['message'], 'No valid fields to update!')
+
+    def test_add_without_token(self):
+        data = {
+            "items": [str(self.item.id)]
+        }
+        response = self.client.post(f'/users/{self.user.id}/add', json=data)
+
+        self.assertEqual(response.status_code, 403)  # Expecting Forbidden since no token is provided
 
 
 if __name__ == '__main__':
