@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from mongoengine import DoesNotExist
 
 import json
@@ -8,6 +8,21 @@ from app.models.user import User
 from app.utils.auth_utils import token_required
 
 session_bp = Blueprint('session_bp', __name__)
+
+def clear_session_data():
+    for user in User.objects().all():
+        user.items = []
+        user.save()
+    for item in Item.objects().all():
+        item.available = True
+        item.claimed = False
+        item.save()
+
+@session_bp.route('/clear', methods=['POST'])
+@token_required(dm_required=True)
+def clear_session(**kwargs):
+    clear_session_data()
+    return '', 204
 
 @session_bp.route('/export', methods=['GET'])
 @token_required(dm_required=True)
@@ -24,14 +39,14 @@ def export_session(**kwargs):
 def import_session(**kwargs):
     responses = {}
     data = request.get_json()
-
+    clear_session_data()
     for user_data in data['item']:
         try:
-            item = Item.objects.get(unique=user_data['unique'])
+            item = Item.objects.get(_id=user_data['_id'])
             item.available = user_data['available']
             item.claimed = user_data['claimed']
             item.save()
-            responses.add('200')
+            responses.add('204')
         except DoesNotExist:
             responses.add('400')
 
@@ -40,24 +55,13 @@ def import_session(**kwargs):
             user = User.objects.get(username=user_data['username'])
             user.items = user_data['items']
             user.save()
-            responses.add('200')
+            responses.add('204')
         except DoesNotExist:
             responses.add('400')
 
     if '400' in responses:
-        return 'one or more invalid values', 400
-    elif '200' in responses:
-        return 'import successful', 200
+        clear_session_data()
+        return jsonify({'message': 'One or more invalid fields'}), 400
+    elif '204' in responses:
+        return '', 204
 
-
-@session_bp.route('/clear', methods=['POST'])
-@token_required(dm_required=True)
-def clear_session(**kwargs):
-    for user in User.objects().all():
-        user.items = []
-        user.save()
-    for item in Item.objects().all():
-        item.available = True
-        item.claimed = False
-        item.save()
-    return '', 204
