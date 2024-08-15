@@ -1,5 +1,6 @@
 import base64
 import unittest
+import json
 
 from mongoengine import disconnect
 
@@ -92,6 +93,83 @@ class SessionControllerTestCase(unittest.TestCase):
         response = self.client.post('/session/clear')
 
         self.assertEqual(response.status_code, 403)  # Expecting Forbidden
+    
+    def test_export_session(client):
+        # Add mock data
+        user = User(username="john_doe", items=["item1", "item2"]).save()
+        item = Item(name="Laptop", available=False, claimed=True).save()
+
+        # Call the export_session route
+        response = client.get('/export')
+
+        assert response.status_code == 200
+
+        session_data = json.loads(response.data)
+
+        assert len(session_data['user']) == 1
+        assert len(session_data['item']) == 1
+        assert session_data['user'][0]['username'] == "john_doe"
+        assert session_data['item'][0]['name'] == "Laptop"
+
+    def test_import_session(client):
+        # Add initial mock data to be imported
+        import_data = {
+            "user": [
+                {
+                    "username": "john_doe",
+                    "items": ["item1", "item2"]
+                }
+            ],
+            "item": [
+                {
+                    "_id": "1",
+                    "name": "Laptop",
+                    "available": False,
+                    "claimed": True
+                }
+            ]
+        }
+
+        # Call the import_session route
+        response = client.post('/import', data=json.dumps(import_data), content_type='application/json')
+
+        assert response.status_code == 204
+
+        # Verify the imported data
+        user = User.objects.get(username="john_doe")
+        assert user.items == ["item1", "item2"]
+
+        item = Item.objects.get(name="Laptop")
+        assert item.available is False
+        assert item.claimed is True
+
+    def test_import_session_invalid_data(client):
+        # Mock invalid data (e.g., a non-existent username or item)
+        import_data = {
+            "user": [
+                {
+                    "username": "non_existent_user",
+                    "items": ["item1"]
+                }
+            ],
+            "item": [
+                {
+                    "_id": "999",
+                    "name": "NonExistentItem",
+                    "available": False,
+                    "claimed": True
+                }
+            ]
+        }
+
+        # Call the import_session route with invalid data
+        response = client.post('/import', data=json.dumps(import_data), content_type='application/json')
+
+        assert response.status_code == 400
+
+        # Verify that no data was imported
+        assert User.objects.count() == 0
+        assert Item.objects.count() == 0
 
 
 if __name__ == '__main__':
