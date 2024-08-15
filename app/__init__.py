@@ -5,14 +5,15 @@ from flask_socketio import SocketIO
 from mongoengine import connect
 from werkzeug.exceptions import HTTPException
 
+from app.utils.json_provider import CustomJSONProvider
 from app.views.auth import auth_bp
 from app.views.encounter import encounter_bp
 from app.views.item import item_bp
 from app.views.roll import roll_bp
 from app.views.rolltable import rolltable_bp
 from app.views.room import room_bp
+from app.views.session import session_bp
 from app.views.user import user_bp
-from app.utils.json_provider import CustomJSONProvider
 from config.settings import settings
 
 socketio = SocketIO()
@@ -27,6 +28,8 @@ def create_app():
     socketio.init_app(flask_app)
 
     connect(host=settings.MONGO_URI, uuidRepresentation='standard')
+
+    flask_app.register_blueprint(session_bp, url_prefix='/session')
 
     flask_app.register_blueprint(auth_bp, url_prefix='/auth')
     flask_app.register_blueprint(user_bp, url_prefix='/users')

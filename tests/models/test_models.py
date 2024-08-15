@@ -1,5 +1,7 @@
 import unittest
-from mongoengine import connect, disconnect
+
+from mongoengine import disconnect
+
 from app.models.encounter import Encounter
 from app.models.item import Item
 from app.models.rolltable import RollTable
@@ -13,7 +15,7 @@ class MongoEngineTestCase(unittest.TestCase):
     def setUpClass(cls):
         pass
         # Connect to a test database
-        connect('mongoenginetest', alias='default', uuidRepresentation='standard')
+        # connect('mongoenginetest', alias='default', uuidRepresentation='standard')
 
     @classmethod
     def tearDownClass(cls):
