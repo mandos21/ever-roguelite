@@ -64,5 +64,4 @@ def import_session(**kwargs):
             clear_session_data()
             return jsonify({'message': 'One or more invalid fields'}), 400
 
-    return jsonify({'message': f'{user_count} users and {item_count} items imported'}), 400
-
+    return jsonify({'message': f'{user_count} users and {item_count} items imported'}), 204
