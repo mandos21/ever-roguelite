@@ -1,10 +1,10 @@
 import unittest
 
 from app.models.item import Item
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class ItemControllerTestCase(ControllerTestBase):
+class ItemViewTestCase(ViewTestBase):
 
     def test_create_item(self):
         content = {

@@ -3,10 +3,10 @@ import unittest
 
 from app.models.item import Item
 from app.models.user import User
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class UserControllerTestCase(ControllerTestBase):
+class UserViewTestCase(ViewTestBase):
 
     def setUp(self):
         super().setUp()

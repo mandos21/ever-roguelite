@@ -13,7 +13,7 @@ def drop_all_collections():
         db.drop_collection(collection_name)
 
 
-class ControllerTestBase(unittest.TestCase):
+class ViewTestBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

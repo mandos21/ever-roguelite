@@ -1,9 +1,9 @@
 import unittest
 from app.models.room import Room
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class RoomControllerTestCase(ControllerTestBase):
+class RoomViewTestCase(ViewTestBase):
 
     def test_create_room(self):
         content = {

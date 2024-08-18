@@ -5,7 +5,7 @@ from mongoengine import disconnect
 import base64
 
 
-class AuthControllerTestCase(unittest.TestCase):
+class AuthViewTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
