@@ -1,5 +1,8 @@
 from flask import Blueprint, request, jsonify
 from mongoengine import DoesNotExist
+from bson import ObjectId
+
+
 
 import json
 
@@ -45,7 +48,8 @@ def import_session(**kwargs):
     for user_data in data['user']:
         try:
             user = User.objects.get(username=user_data['username'])
-            user.items = user_data['items']
+            # user.items = user_data['items']
+            user.items = [ObjectId(item_id) for item_id in user_data['items']]
             user.save()
             user_count+=1
         except DoesNotExist:
@@ -53,15 +57,15 @@ def import_session(**kwargs):
             return jsonify({'message': 'One or more invalid fields'}), 400
 
 
-    for user_data in data['item']:
+    for item_data in data['item']:
         try:
-            item = Item.objects.get(_id=user_data['_id'])
-            item.available = user_data['available']
-            item.claimed = user_data['claimed']
+            item = Item.objects.get(id=ObjectId(item_data['_id']))
+            item.available = item_data['available']
+            item.claimed = item_data['claimed']
             item.save()
             item_count+=1
         except DoesNotExist:
             clear_session_data()
             return jsonify({'message': 'One or more invalid fields'}), 400
 
-    return jsonify({'message': f'{user_count} users and {item_count} items imported'}), 204
+    return jsonify({'message': f'{user_count} users and {item_count} items imported'}), 200
