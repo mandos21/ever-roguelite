@@ -28,8 +28,8 @@ def register():
 def login():
     auth_header = request.headers.get('Authorization')
 
-    # if not auth_header or not auth_header.startswith('Basic '):
-    #     return jsonify({'message': 'Authorization header is missing or invalid'}), 401
+    if not auth_header or not auth_header.startswith('Basic '):
+        return jsonify({'message': 'Authorization header is missing or invalid'}), 401
 
     # Decode the Basic Auth header
     try:

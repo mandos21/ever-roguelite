@@ -3,9 +3,6 @@ from tests.views.test_view_base import ViewTestBase, drop_all_collections
 import json
 import unittest
 
-from mongoengine import disconnect
-
-from app import create_app
 from app.models.item import Item
 from app.models.user import User
 

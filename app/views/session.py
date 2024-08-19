@@ -2,10 +2,6 @@ from flask import Blueprint, request, jsonify
 from mongoengine import DoesNotExist
 from bson import ObjectId
 
-
-
-import json
-
 from app.models.item import Item
 from app.models.user import User
 from app.utils.auth_utils import token_required
@@ -48,7 +44,6 @@ def import_session(**kwargs):
     for user_data in data['user']:
         try:
             user = User.objects.get(username=user_data['username'])
-            # user.items = user_data['items']
             user.items = [ObjectId(item_id) for item_id in user_data['items']]
             user.save()
             user_count+=1
