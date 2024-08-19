@@ -21,3 +21,14 @@ class User(Document):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def get_item_names(self):
+        [item.to_mongo().to_dict()['name'] for item in self.items]
+    
+    def to_dict(self):
+        user_dict = self.to_mongo().to_dict()
+        
+        # Convert the 'items' field to a list of serialized Item documents
+        user_dict['items'] = [item.to_mongo().to_dict() for item in self.items]
+        
+        return user_dict

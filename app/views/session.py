@@ -28,10 +28,10 @@ def clear_session(**kwargs):
 @token_required(dm_required=True)
 def export_session(**kwargs):
     session = {
-        "user": [user.to_mongo().to_dict() for user in User.objects()],
+        "user": [user.to_dict() for user in User.objects()],
         "item": [item.to_mongo().to_dict() for item in Item.objects()]
     }
-    return json.dumps(session), 200
+    return jsonify(session), 200
 
 
 @session_bp.route('/import', methods=['POST'])

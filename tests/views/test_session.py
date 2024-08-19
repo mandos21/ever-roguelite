@@ -95,53 +95,80 @@ class SessionViewTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 403)  # Expecting Forbidden
     
     def test_export_session(self):
-        # Add mock data
-        user = User(username="john_doe", items=["item1", "item2"]).save()
-        item = Item(name="Laptop", available=False, claimed=True).save()
-
         # Call the export_session route
-        response = self.client.get('/export')
-
+        response = self.client.get('/session/export', headers={
+            'Authorization': f'Bearer {self.token}'
+        })
         assert response.status_code == 200
 
         session_data = json.loads(response.data)
 
-        assert len(session_data['user']) == 1
-        assert len(session_data['item']) == 1
-        assert session_data['user'][0]['username'] == "john_doe"
-        assert session_data['item'][0]['name'] == "Laptop"
+        assert len(session_data['user']) == 2
+        assert len(session_data['item']) == 2
+        assert session_data['user'][0]['username'] == 'dmuser'
+        assert session_data['item'][0]['name'] == 'Sword of Testing'
+        assert session_data['user'][1]['username'] == 'regularuser'
+        assert session_data['item'][1]['name'] == 'Shield of Testing'
 
     def test_import_session(self):
         # Add initial mock data to be imported
         import_data = {
-            "user": [
+            'item': [
                 {
-                    "username": "john_doe",
-                    "items": ["item1", "item2"]
+                    '_id': '66c2d78b33a0a189170c43e0',
+                    'available': False,
+                    'claimed': True
+                },
+                {
+                    '_id': '66c2d78b33a0a189170c43e1',
+                    'available': False,
+                    'claimed': True
                 }
             ],
-            "item": [
+            'user': [
                 {
-                    "_id": "1",
-                    "name": "Laptop",
-                    "available": False,
-                    "claimed": True
+                    'username': 'dmuser',
+                    'items': []
+                },
+                {
+                    'username': 'regularuser',
+                    'items': [
+                        {
+                            '_id': '66c2d78b33a0a189170c43e0',
+                            'available': False,
+                            'claimed': True
+                        },
+                        {
+                            '_id': '66c2d78b33a0a189170c43e1',
+                            'available': False,
+                            'claimed': True
+                        }
+                    ]
                 }
             ]
         }
 
         # Call the import_session route
-        response = self.client.post('/import', data=json.dumps(import_data), content_type='application/json')
 
+        response = self.client.post('/session/import',
+                                    data=json.dumps(import_data),
+                                    content_type='application/json',
+                                    headers={
+                                    'Authorization': f'Bearer {self.token}'
+                                    }
+                                )
         assert response.status_code == 200
 
         # Check the response message
         response_data = json.loads(response.data)
-        assert response_data['message'] == "1 users and 1 items imported"
+        assert response_data['message'] == "2 users and 2 items imported"
 
         # Verify the imported data
-        user = User.objects.get(username="john_doe")
-        assert user.items == ["item1", "item2"]
+        dmuser = User.objects.get(username="dmuser")
+        assert dmuser.get_item_names() == []
+
+        regularuser = User.objects.get(username="regularuser")
+        assert regularuser.get_item_names() == ['Sword of Testing', 'Shield of Testing']
 
         item = Item.objects.get(name="Laptop")
         assert item.available is False
