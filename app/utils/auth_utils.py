@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 import jwt
@@ -16,8 +16,8 @@ logging.basicConfig(level=logging.WARN)
 def encode_auth_token(user_id, is_dm):
     try:
         payload = {
-            'exp': datetime.utcnow() + timedelta(days=1),
-            'iat': datetime.utcnow(),
+            'exp': datetime.now(timezone.utc) + timedelta(days=1),
+            'iat': datetime.now(timezone.utc),
             'sub': str(user_id),
             'is_dm': is_dm
         }
