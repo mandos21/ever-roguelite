@@ -20,7 +20,7 @@ class MongoEngineTestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         # Disconnect from the test database
-        disconnect(alias='default')
+        disconnect(alias="default")
 
     def setUp(self):
         # Clear the database before each test
@@ -31,15 +31,26 @@ class MongoEngineTestCase(unittest.TestCase):
         User.drop_collection()
 
     def test_encounter_creation(self):
-        encounter = Encounter(name="Test Encounter", description="An encounter", min_players=1, max_players=4)
+        encounter = Encounter(
+            name="Test Encounter",
+            description="An encounter",
+            min_players=1,
+            max_players=4,
+        )
         encounter.save()
         self.assertEqual(encounter.type, "Encounter")
         self.assertEqual(encounter.min_players, 1)
         self.assertEqual(encounter.max_players, 4)
 
     def test_item_creation(self):
-        item = Item(name="Test Item", description="An item", unique=True, claimed=False, has_been_rolled=False,
-                    available=True)
+        item = Item(
+            name="Test Item",
+            description="An item",
+            unique=True,
+            claimed=False,
+            has_been_rolled=False,
+            available=True,
+        )
         item.save()
         self.assertEqual(item.type, "Item")
         self.assertTrue(item.unique)
@@ -48,21 +59,33 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertTrue(item.available)
 
     def test_rolltable_creation(self):
-        rolltable = RollTable(name="Test RollTable", description="A rolltable", weight=5, tier="Gold",
-                              table_type="Magic Items")
+        rolltable = RollTable(
+            name="Test RollTable",
+            description="A rolltable",
+            weight=5,
+            tier="Gold",
+            table_type="Magic Items",
+        )
         rolltable.save()
         self.assertEqual(rolltable.tier, "Gold")
         self.assertEqual(rolltable.table_type, "Magic Items")
 
     def test_room_creation(self):
-        room = Room(name="Test Room", description="A room", reward_tier="Silver")
+        room = Room(
+            name="Test Room", description="A room", reward_tier="Silver"
+        )
         room.save()
         self.assertEqual(room.type, "Room")
         self.assertEqual(room.reward_tier, "Silver")
 
     def test_user_creation(self):
-        user = User(username="testuser", email="testuser@example.com", password_hash="password_hash", is_active=True,
-                    is_dm=True)
+        user = User(
+            username="testuser",
+            email="testuser@example.com",
+            password_hash="password_hash",
+            is_active=True,
+            is_dm=True,
+        )
         user.set_password("password")
         user.save()
         self.assertEqual(user.username, "testuser")
@@ -72,12 +95,30 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertTrue(user.check_password("password"))
 
     def test_rolltable_with_items(self):
-        item1 = Item(name="Item1", description="First item", unique=True, claimed=False, has_been_rolled=False,
-                     available=True).save()
-        item2 = Item(name="Item2", description="Second item", unique=True, claimed=False, has_been_rolled=False,
-                     available=True).save()
-        rolltable = RollTable(name="Item RollTable", description="Table of items", weight=1, tier="Bronze",
-                              table_type="Magic Items", items=[item1, item2])
+        item1 = Item(
+            name="Item1",
+            description="First item",
+            unique=True,
+            claimed=False,
+            has_been_rolled=False,
+            available=True,
+        ).save()
+        item2 = Item(
+            name="Item2",
+            description="Second item",
+            unique=True,
+            claimed=False,
+            has_been_rolled=False,
+            available=True,
+        ).save()
+        rolltable = RollTable(
+            name="Item RollTable",
+            description="Table of items",
+            weight=1,
+            tier="Bronze",
+            table_type="Magic Items",
+            items=[item1, item2],
+        )
         rolltable.save()
         retrieved_rolltable = RollTable.objects(id=rolltable.id).first()
         self.assertEqual(len(retrieved_rolltable.items), 2)
@@ -85,5 +126,5 @@ class MongoEngineTestCase(unittest.TestCase):
         self.assertIn(item2, retrieved_rolltable.items)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

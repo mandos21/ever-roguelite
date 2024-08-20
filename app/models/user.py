@@ -1,5 +1,12 @@
-from mongoengine import StringField, BooleanField, ListField, EmailField, Document, ReferenceField
-from werkzeug.security import generate_password_hash, check_password_hash
+from mongoengine import (
+    BooleanField,
+    Document,
+    EmailField,
+    ListField,
+    ReferenceField,
+    StringField,
+)
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.models.item import Item
 
@@ -12,9 +19,7 @@ class User(Document):
     is_active = BooleanField(default=False)
     is_dm = BooleanField(default=False, required=True)
     items = ListField(ReferenceField(Item))
-    meta = {
-        'collection': 'users'
-    }
+    meta = {"collection": "users"}
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
