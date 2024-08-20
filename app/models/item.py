@@ -1,4 +1,4 @@
-from mongoengine import StringField, BooleanField
+from mongoengine import BooleanField, StringField
 
 from app.models.rollable import Rollable
 
@@ -10,6 +10,4 @@ class Item(Rollable):
     has_been_rolled = BooleanField(default=False, required=True)
     available = BooleanField(default=True)  # for current round of rolling
     image_file_location = StringField()
-    meta = {
-        'collection': 'rollable_items'
-    }
+    meta = {"collection": "rollable_items"}
