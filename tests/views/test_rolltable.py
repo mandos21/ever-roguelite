@@ -2,10 +2,10 @@ import unittest
 
 from app.models.item import Item
 from app.models.rolltable import RollTable
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class RollTableControllerTestCase(ControllerTestBase):
+class RollTableViewTestCase(ViewTestBase):
 
     def setUp(self):
         super().setUp()

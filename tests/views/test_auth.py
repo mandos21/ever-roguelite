@@ -7,7 +7,7 @@ from app import create_app
 from app.models.user import User
 
 
-class AuthControllerTestCase(unittest.TestCase):
+class AuthViewTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

@@ -2,10 +2,10 @@ import unittest
 
 from app import socketio
 from app.models.user import User
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class SocketNamespaceTestCase(ControllerTestBase):
+class SocketNamespaceTestCase(ViewTestBase):
 
     def setUp(self):
         super().setUp()

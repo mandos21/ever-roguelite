@@ -9,7 +9,7 @@ from app.models.rolltable import RollTable
 from app.models.room import Room
 
 
-class RollControllerTestCase(unittest.TestCase):
+class RollViewTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):

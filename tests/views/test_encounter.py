@@ -1,10 +1,10 @@
 import unittest
 
 from app.models.encounter import Encounter
-from tests.views.test_view_base import ControllerTestBase
+from tests.views.test_view_base import ViewTestBase
 
 
-class EncounterControllerTestCase(ControllerTestBase):
+class EncounterViewTestCase(ViewTestBase):
 
     def test_create_encounter(self):
         content = {

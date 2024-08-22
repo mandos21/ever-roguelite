@@ -8,7 +8,7 @@ from app.models.item import Item
 from app.models.user import User
 
 
-class SessionControllerTestCase(unittest.TestCase):
+class SessionViewTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
