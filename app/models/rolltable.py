@@ -7,12 +7,15 @@ from app.models.room import Room
 
 
 class RollTable(Rollable):
-    tier = StringField(required=True, choices=["Platinum", "Gold", "Silver", "Bronze"])
-    table_type = StringField(required=True, choices=["Magic Items", "Weapons", "Encounters", "Rooms"])
+    tier = StringField(
+        required=True, choices=["Platinum", "Gold", "Silver", "Bronze"]
+    )
+    table_type = StringField(
+        required=True,
+        choices=["Magic Items", "Weapons", "Encounters", "Rooms"],
+    )
 
     items = ListField(ReferenceField(Item))
     encounters = ListField(ReferenceField(Encounter))
     rooms = ListField(ReferenceField(Room))
-    meta = {
-        'collection': 'rolltables'
-    }
+    meta = {"collection": "rolltables"}

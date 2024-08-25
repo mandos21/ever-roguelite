@@ -1,8 +1,8 @@
-from mongoengine import Document, StringField, IntField
+from mongoengine import Document, IntField, StringField
 
 
 class Rollable(Document):
-    meta = {'abstract': True}
+    meta = {"abstract": True}
 
     name = StringField(required=True)
     description = StringField(require=True)

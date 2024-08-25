@@ -1,4 +1,5 @@
-from mongoengine import StringField, IntField
+from mongoengine import IntField, StringField
+
 from app.models.rollable import Rollable
 
 
@@ -7,6 +8,4 @@ class Encounter(Rollable):
     min_players = IntField(required=True)
     max_players = IntField(required=True)
 
-    meta = {
-        'collection': 'rollable_encounters'
-    }
+    meta = {"collection": "rollable_encounters"}
