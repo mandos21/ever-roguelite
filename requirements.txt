@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 bidict==0.23.1
+black==23.9.1
 blinker==1.8.2
 cffi==1.16.0
 click==8.1.7
@@ -11,6 +12,7 @@ Flask-SocketIO==5.3.6
 gunicorn==22.0.0
 h11==0.14.0
 iniconfig==2.0.0
+isort==5.13.2
 itsdangerous==2.2.0
 Jinja2==3.1.4
 lazy-model==0.2.0
