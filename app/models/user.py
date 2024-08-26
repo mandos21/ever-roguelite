@@ -26,3 +26,6 @@ class User(Document):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_item_names(self):
+        return [item.name for item in self.items]

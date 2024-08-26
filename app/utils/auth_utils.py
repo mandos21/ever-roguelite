@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.WARN)
 def encode_auth_token(user_id, is_dm):
     try:
         payload = {
+
             "exp": datetime.now(timezone.utc) + timedelta(days=1),
             "iat": datetime.now(timezone.utc),
             "sub": str(user_id),

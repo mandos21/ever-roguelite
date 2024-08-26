@@ -3,14 +3,9 @@ from flask import Blueprint, jsonify, request
 
 from app.models.rolltable import RollTable
 from app.utils.auth_utils import token_required
-from app.utils.crud_helpers import (
-    create_document,
-    delete_document,
-    get_all_documents,
-    get_document,
-    modify_document,
-    update_document,
-)
+from app.utils.crud_helpers import (create_document, delete_document,
+                                    get_all_documents, get_document,
+                                    modify_document, update_document)
 
 rolltable_bp = Blueprint("rolltable_bp", __name__)
 

@@ -2,13 +2,9 @@ from flask import Blueprint, jsonify, request
 
 from app.models.item import Item
 from app.utils.auth_utils import token_required
-from app.utils.crud_helpers import (
-    create_document,
-    delete_document,
-    get_all_documents,
-    get_document,
-    update_document,
-)
+from app.utils.crud_helpers import (create_document, delete_document,
+                                    get_all_documents, get_document,
+                                    update_document)
 
 item_bp = Blueprint("item_bp", __name__)
 
