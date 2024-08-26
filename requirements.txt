@@ -20,6 +20,7 @@ MarkupSafe==2.1.5
 mongoengine==0.28.2
 packaging==24.1
 pluggy==1.5.0
+pre-commit==3.8.0
 pycparser==2.22
 pydantic==2.8.2
 pydantic_core==2.20.1
