@@ -12,6 +12,7 @@ class SessionViewTestCase(ViewTestBase):
     def setUp(self):
         super().setUp()
 
+
         # Create a regular user
         self.regular_user = User(
             username="regularuser",

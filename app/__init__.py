@@ -21,6 +21,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_app():
+    from app.views import socket
+
     flask_app = Flask(__name__)
     flask_app.config.from_object(settings)
     flask_app.json = CustomJSONProvider(flask_app)
