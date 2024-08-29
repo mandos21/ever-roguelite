@@ -26,7 +26,7 @@ def perform_roll(**kwargs):
     data = request.get_json()
     rolltable_id = data.get("rolltable_id")
     num_results = data.get("num_results")
-    constraints = data.get("constraints", {})
+    constraints = data.get("constraints", {"claimed": False})
 
     max_retries = 3
     retry_delay = 0.1  # 100 milliseconds
